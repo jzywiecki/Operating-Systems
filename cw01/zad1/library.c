@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <libc.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 Counter *counter;
 
@@ -61,6 +62,7 @@ bool add_block(char* block, int index){
     counter->size++;
     counter->pointers_array[index] = (char *) calloc(strlen(block) + 1, sizeof(char));
     strcpy(counter->pointers_array[index], block);
+    printf("Saved!\n");
     return true;
 }
 
@@ -77,17 +79,16 @@ bool free_pointers_array(){
     free(counter->pointers_array); //free pointers_array
     free(counter); //free the whole structure
     printf("Action completed successfully!\n");
+    counter = NULL;
     return true;
 }
 
-char* get_block_content(int index){
+void get_block_content(int index){
     if (counter == NULL || index < 0 || index >= counter->max_size || counter->pointers_array[index] == NULL){ //check if structure exists, index is proper and there is saved block at given idnex
         printf("Incorrect action!\n");
-        return NULL;
     }
     else {
-        printf("Correct action!\n");
-        return counter->pointers_array[index];
+        printf("%s\n", counter->pointers_array[index]);
     }
 }
 
@@ -140,6 +141,10 @@ void counting_procedure(Counter *structure, char* file_name){
     }
     if (structure->size == structure->max_size){
         printf("Structure is already full.\n");
+        return;
+    }
+    if (access(file_name, F_OK) != 0){
+        printf("File does not exist!\n");
         return;
     }
 

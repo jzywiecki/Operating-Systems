@@ -1,5 +1,5 @@
-#ifndef ZAD1_LIBRARY_H
-#define ZAD1_LIBRARY_H
+#ifndef LIBRARY_H
+#define LIBRARY_H
 
 #include <stdio.h>
 #include <libc.h>
@@ -24,7 +24,7 @@ bool add_block(char* block, int index);
 bool free_pointers_array();
 
 //function that gets block content at given index
-char* get_block_content(int index);
+void get_block_content(int index);
 
 //function that gets index of the first free space in pointers_array
 int get_free_index();
@@ -35,4 +35,4 @@ char* create_command(char* file_name);
 //counting procedure for given file name
 void counting_procedure(Counter *structure, char* file_name);
 
-#endif //ZAD1_LIBRARY_H
+#endif //LIBRARY_H
