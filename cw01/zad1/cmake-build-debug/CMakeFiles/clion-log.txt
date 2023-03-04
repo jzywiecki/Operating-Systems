@@ -1,0 +1,1 @@
+CMakeLists.txt not found in /Users/jakubzywiecki/Desktop/Studia/Sysopy/cw01/zad1 Select CMakeLists.txt
