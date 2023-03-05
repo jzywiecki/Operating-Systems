@@ -8,9 +8,6 @@ shared:
 	@gcc -Wall -fPIC -c library.c
 	@gcc -Wall -fPIC -shared library.o -o library.so
 
-main: main.c library.c library.h
-	@gcc main.c library.c -o main
-
 clean:
 	@rm -f *.o *.a *.so
 
