@@ -1,4 +1,4 @@
-CFLAGS = -Wall -std=gnu11
+CFLAGS = -Wall
 
 all: compile_static compile_shared compile_dynamic
 
@@ -10,14 +10,14 @@ static:
 shared:
 	@echo "Shared"
 	@gcc $(CFLAGS) -fPIC -c library.c -o library.o
-	@gcc $(CFLAGS) -fPIC -shared library.o -o library.so
+	@gcc $(CFLAGS) -fPIC -shared library.o -o liblibrary.so
 
 dynamic:
 
 
 
 clean:
-	echo "Removing everything but the source files!"
+	@echo "Removing everything but the source files!"
 	@rm -f *.o *.a *.so
 
 compile_static: static
