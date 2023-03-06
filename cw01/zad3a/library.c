@@ -1,26 +1,24 @@
 #include "library.h"
-
 #include <stdio.h>
 #include <libc.h>
 #include <unistd.h>
 
-Counter *counter;
-
-
-void create_counter(int max_size){
+Counter* create_counter(int max_size){
+    Counter *counter;
     if (max_size <= 0){ //check if max_size of our structure is at least 1
         printf("Array length should be greater than 0!\n");
-        return;
+        return NULL;
     }
     counter = malloc(sizeof(Counter)); //alloc memory for our structure
     counter->max_size = max_size;
     counter->size = 0;
     counter->pointers_array = calloc(max_size, sizeof(char*)); //alloc memory for array of pointers
     printf("Counter created successfully!\n");
+    return counter;
 }
 
 
-void remove_block(int index){
+void remove_block(Counter* counter, int index){
     if (counter == NULL){ //check if structure exists
         printf("Structure is not made yet!\n");
         return;
@@ -44,7 +42,7 @@ void remove_block(int index){
     printf("Successfully removed block at given index!\n");
 }
 
-void add_block(char* block, int index){
+void add_block(Counter* counter, char* block, int index){
     if (counter == NULL){ //check if structure exists
         printf("Structure is not made yet!\n");
         return;
@@ -64,7 +62,7 @@ void add_block(char* block, int index){
     printf("Saved!\n");
 }
 
-void free_counter(){
+void free_counter(Counter* counter){
     if (counter == NULL){ //check if structure exists
         printf("Structure is not made yet, so you can't delete it.\n");
         return;
@@ -80,7 +78,7 @@ void free_counter(){
     counter = NULL;
 }
 
-void get_block_content(int index){
+void get_block_content(Counter* counter, int index){
     if (counter == NULL || index < 0 || index >= counter->max_size || counter->pointers_array[index] == NULL){ //check if structure exists, index is proper and there is saved block at given idnex
         printf("Incorrect action!\n");
     }
@@ -89,7 +87,7 @@ void get_block_content(int index){
     }
 }
 
-int get_free_index(){
+int get_free_index(Counter* counter){
     if (counter == NULL){ //check if structure exists
         printf("Structure is not made yet!\n");
         return -1;
@@ -130,7 +128,7 @@ char* create_command(char* file_name){
     return command;
 }
 
-void counting_procedure(char* file_name){
+void counting_procedure(Counter* counter, char* file_name){
     //check if structure is already made and if it has empty place to store new data
     if (counter == NULL){
         printf("Structure is not made yet.\n");
@@ -182,5 +180,5 @@ void counting_procedure(char* file_name){
     system("rm -r -f tmp");
 
     //adding block about our analysed file at free index
-    add_block(file_content, get_free_index());
+    add_block(counter, file_content, get_free_index(counter));
 }

@@ -4,13 +4,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include "library.h"
 
 #ifdef DYNAMIC
     #include <dlfcn.h>
-#else
-    #include "library.h"
 #endif
-
 
 
 char* sep = " \n";
@@ -29,6 +27,7 @@ clock_t clock_start;
 clock_t clock_end;
 struct tms start_tms;
 struct tms end_tms;
+Counter* counter;
 
 void init_handler(char* operator);
 
@@ -45,7 +44,7 @@ int main() {
     while(1){
         fgets(line, LINE_MAX, stdin);
         if (strlen(line) == 1){
-            printf("Input correct command!");
+            printf("Input correct command!\n");
             continue;
         }
         char* operator = strtok(line, sep);
@@ -93,10 +92,10 @@ void init_handler(char *operator) {
                 dlclose(handle);
                 return;
             }
-            void (*create_counter)(int);
+            Counter* (*create_counter)(int);
             create_counter = dlsym(handle, "create_counter");
         #endif
-        create_counter(size);
+        counter = create_counter(size);
         #ifdef DYNAMIC
             dlclose(handle);
         #endif
@@ -116,10 +115,10 @@ void count_handler(char *operator) {
             dlclose(handle);
             return;
         }
-        void (*counting_procedure)(char*);
+        void (*counting_procedure)(Counter*, char*);
         counting_procedure = dlsym(handle, "counting_procedure");
     #endif
-    counting_procedure(operator);
+    counting_procedure(counter, operator);
     #ifdef DYNAMIC
         dlclose(handle);
     #endif
@@ -144,10 +143,10 @@ void show_handler(char *operator) {
                 dlclose(handle);
                 return;
             }
-        void (*get_block_content)(int);
+        void (*get_block_content)(Counter*, int);
         get_block_content = dlsym(handle, "get_block_content");
         #endif
-        get_block_content(index);
+        get_block_content(counter, index);
         #ifdef DYNAMIC
             dlclose(handle);
         #endif
@@ -173,10 +172,10 @@ void delete_handler(char *operator) {
                 dlclose(handle);
                 return;
             }
-        void (*remove_block)(int);
+        void (*remove_block)(Counter*, int);
         remove_block = dlsym(handle, "remove_block");
         #endif
-        remove_block(index);
+        remove_block(counter, index);
         #ifdef DYNAMIC
             dlclose(handle);
         #endif
@@ -195,10 +194,10 @@ void destroy_handler() {
             dlclose(handle);
             return;
         }
-        void (*free_counter)();
+        void (*free_counter)(Counter*);
         free_counter = dlsym(handle, "free_counter");
     #endif
-    free_counter();
+    free_counter(counter);
     #ifdef DYNAMIC
         dlclose(handle);
     #endif

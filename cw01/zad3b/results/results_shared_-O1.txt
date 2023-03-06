@@ -5,7 +5,7 @@ sys time: 0.000000
 
 Found free index (0)!
 Saved!
-real time: 0.030000
+real time: 0.010000
 user time: 0.000000
 sys time: 0.000000
 

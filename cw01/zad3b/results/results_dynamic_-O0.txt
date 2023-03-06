@@ -1,5 +1,5 @@
 Counter created successfully!
-real time: 0.000000
+real time: 0.050000
 user time: 0.000000
 sys time: 0.000000
 

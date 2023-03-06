@@ -11,27 +11,27 @@ typedef struct {
 } Counter;
 
 //function creating Counter structure
-void create_counter(int max_size);
+Counter* create_counter(int max_size);
 
 //function removing block at given index in Counter structure
-void remove_block(int index);
+void remove_block(Counter* counter, int index);
 
 //function adding block at given index in Counter structure
-void add_block(char* block, int index);
+void add_block(Counter* counter, char* block, int index);
 
 //function that free memory used by Counter
-void free_counter();
+void free_counter(Counter* counter);
 
 //function that gets block content at given index
-void get_block_content(int index);
+void get_block_content(Counter* counter, int index);
 
 //function that gets index of the first free space in pointers_array
-int get_free_index();
+int get_free_index(Counter* counter);
 
 //auxiliary function that creates command needed for our counting procedure
 char* create_command(char* file_name);
 
 //counting procedure for given file name
-void counting_procedure(char* file_name);
+void counting_procedure(Counter* counter, char* file_name);
 
 #endif //LIBRARY_H
