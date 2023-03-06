@@ -33,8 +33,7 @@ compile_shared: shared
 
 compile_dynamic: dynamic
 	@make dynamic
-	@gcc -c main.c
-	@gcc -D DYNAMIC -o main -L./ main.o -llibrary
+	@gcc main.c -o main -ldl -D DYNAMIC
 
 
 

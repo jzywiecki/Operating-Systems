@@ -1,9 +1,14 @@
-#include "library.h"
 #include <limits.h>
 #include <sys/times.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdio.h>
 
 #ifdef DYNAMIC
-    printf("Dynamic!");
+    #include <dlfcn.h>
+#else
+    #include "library.h"
 #endif
 
 
@@ -25,70 +30,15 @@ clock_t clock_end;
 struct tms start_tms;
 struct tms end_tms;
 
-void init_handler(char* operator){
-    char *end;
-    operator = strtok(NULL, sep);
-    int size = strtol(operator, &end, 10);
-    if (end==operator){
-        printf("Invalid init input!\n");
-    }
-    else {
-        clock_start = times(&start_tms);
-        create_counter(size);
-        clock_end = times(&end_tms);
-        print_results(clock_start, clock_end, start_tms, end_tms);
-    }
+void init_handler(char* operator);
 
-}
+void count_handler(char* operator);
 
-void count_handler(char* operator){
-    clock_start = times(&start_tms);
-    operator = strtok(NULL, sep);
-    counting_procedure(operator);
-    clock_end = times(&end_tms);
-    print_results(clock_start, clock_end, start_tms, end_tms);
+void show_handler(char* operator);
 
-}
+void delete_handler(char* operator);
 
-void show_handler(char* operator){
-    char *end;
-    operator = strtok(NULL, sep);
-    int index = strtol(operator, &end, 10);
-    if (end==operator){
-        printf("Invalid index input!\n");
-    }
-    else {
-        clock_start = times(&start_tms);
-        get_block_content(index);
-        clock_end = times(&end_tms);
-        print_results(clock_start, clock_end, start_tms, end_tms);
-
-    }
-}
-
-void delete_handler(char* operator){
-    char *end;
-    operator = strtok(NULL, sep);
-    int index = strtol(operator, &end, 10);
-    if (end==operator){
-        printf("Invalid index input!\n");
-    }
-    else {
-        clock_start = times(&start_tms);
-        remove_block(index);
-        clock_end = times(&end_tms);
-        print_results(clock_start, clock_end, start_tms, end_tms);
-
-    }
-}
-
-void destroy_handler(){
-    clock_start = times(&start_tms);
-    free_pointers_array();
-    clock_end = times(&end_tms);
-    print_results(clock_start, clock_end, start_tms, end_tms);
-
-}
+void destroy_handler();
 
 int main() {
     char line[LINE_MAX];
@@ -117,5 +67,138 @@ int main() {
             printf("Command could not be recognised. Check spelling and try again!\n");
         }
     }
+    return 0;
 }
 
+
+
+
+void init_handler(char *operator) {
+    char *end;
+    operator = strtok(NULL, sep);
+    int size = strtol(operator, &end, 10);
+    if (end==operator){
+        printf("Invalid init input!\n");
+    }
+    else {
+        clock_start = times(&start_tms);
+        #ifdef DYNAMIC
+            void* handle = dlopen("liblibrary.so", RTLD_LAZY);
+            if(!handle){
+                printf("dlopen() error: %s\n", dlerror());
+                dlclose(handle);
+                return;
+            }
+            void (*create_counter)(int);
+            create_counter = dlsym(handle, "create_counter");
+        #endif
+        create_counter(size);
+        #ifdef DYNAMIC
+            dlclose(handle);
+        #endif
+        clock_end = times(&end_tms);
+        print_results(clock_start, clock_end, start_tms, end_tms);
+    }
+
+}
+
+void count_handler(char *operator) {
+    clock_start = times(&start_tms);
+    operator = strtok(NULL, sep);
+    #ifdef DYNAMIC
+        void* handle = dlopen("liblibrary.so", RTLD_LAZY);
+        if(!handle){
+            printf("dlopen() error: %s\n", dlerror());
+            dlclose(handle);
+            return;
+        }
+        void (*counting_procedure)(char*);
+        counting_procedure = dlsym(handle, "counting_procedure");
+    #endif
+    counting_procedure(operator);
+    #ifdef DYNAMIC
+        dlclose(handle);
+    #endif
+    clock_end = times(&end_tms);
+    print_results(clock_start, clock_end, start_tms, end_tms);
+
+}
+
+void show_handler(char *operator) {
+    char *end;
+    operator = strtok(NULL, sep);
+    int index = strtol(operator, &end, 10);
+    if (end==operator){
+        printf("Invalid index input!\n");
+    }
+    else {
+        clock_start = times(&start_tms);
+        #ifdef DYNAMIC
+            void* handle = dlopen("liblibrary.so", RTLD_LAZY);
+            if(!handle){
+                printf("dlopen() error: %s\n", dlerror());
+                dlclose(handle);
+                return;
+            }
+        void (*get_block_content)(int);
+        get_block_content = dlsym(handle, "get_block_content");
+        #endif
+        get_block_content(index);
+        #ifdef DYNAMIC
+            dlclose(handle);
+        #endif
+        clock_end = times(&end_tms);
+        print_results(clock_start, clock_end, start_tms, end_tms);
+
+    }
+}
+
+void delete_handler(char *operator) {
+    char *end;
+    operator = strtok(NULL, sep);
+    int index = strtol(operator, &end, 10);
+    if (end==operator){
+        printf("Invalid index input!\n");
+    }
+    else {
+        clock_start = times(&start_tms);
+        #ifdef DYNAMIC
+            void* handle = dlopen("liblibrary.so", RTLD_LAZY);
+            if(!handle){
+                printf("dlopen() error: %s\n", dlerror());
+                dlclose(handle);
+                return;
+            }
+        void (*remove_block)(int);
+        remove_block = dlsym(handle, "remove_block");
+        #endif
+        remove_block(index);
+        #ifdef DYNAMIC
+            dlclose(handle);
+        #endif
+        clock_end = times(&end_tms);
+        print_results(clock_start, clock_end, start_tms, end_tms);
+
+    }
+}
+
+void destroy_handler() {
+    clock_start = times(&start_tms);
+    #ifdef DYNAMIC
+        void* handle = dlopen("liblibrary.so", RTLD_LAZY);
+        if(!handle){
+            printf("dlopen() error: %s\n", dlerror());
+            dlclose(handle);
+            return;
+        }
+        void (*free_counter)();
+        free_counter = dlsym(handle, "free_counter");
+    #endif
+    free_counter();
+    #ifdef DYNAMIC
+        dlclose(handle);
+    #endif
+    clock_end = times(&end_tms);
+    print_results(clock_start, clock_end, start_tms, end_tms);
+
+}
