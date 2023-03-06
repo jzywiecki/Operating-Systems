@@ -133,13 +133,13 @@ char* create_command(char* file_name){
     return command;
 }
 
-void counting_procedure(char* file_name){
+void counting_procedure(Counter *structure, char* file_name){
     //check if structure is already made and if it has empty place to store new data
-    if (counter == NULL){
+    if (structure == NULL){
         printf("Structure is not made yet.\n");
         return;
     }
-    if (counter->size == counter->max_size){
+    if (structure->size == structure->max_size){
         printf("Structure is already full.\n");
         return;
     }

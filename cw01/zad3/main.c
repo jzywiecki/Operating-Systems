@@ -2,12 +2,8 @@
 #include <limits.h>
 #include <sys/times.h>
 
-#ifdef DYNAMIC
-    printf("Dynamic!");
-#endif
 
-
-
+Counter *counter;
 char* sep = " \n";
 
 long double time_sec(clock_t t1, clock_t t2){
@@ -44,7 +40,7 @@ void init_handler(char* operator){
 void count_handler(char* operator){
     clock_start = times(&start_tms);
     operator = strtok(NULL, sep);
-    counting_procedure(operator);
+    counting_procedure(counter, operator);
     clock_end = times(&end_tms);
     print_results(clock_start, clock_end, start_tms, end_tms);
 

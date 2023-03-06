@@ -33,6 +33,6 @@ int get_free_index();
 char* create_command(char* file_name);
 
 //counting procedure for given file name
-void counting_procedure(Counter *structure, char* file_name);
+void counting_procedure(char* file_name);
 
 #endif //LIBRARY_H
