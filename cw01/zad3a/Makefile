@@ -36,6 +36,18 @@ compile_dynamic: dynamic
 	@gcc main.c -o main -ldl -D DYNAMIC
 
 
+test_static:
+	@make compile_static
+	@./main < ./tests/test.txt > ./results/results_static.txt
+
+test_shared:
+	@make compile_shared
+	@./main < ./tests/test.txt > ./results/results_shared.txt
+
+test_dynamic:
+	@make compile_dynamic
+	@./main < ./tests/test.txt > ./results/results_dynamic.txt
+
 
 #@ - don't echo on the output
 #fPIC - Position-Independent Code

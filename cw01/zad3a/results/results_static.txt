@@ -1,0 +1,26 @@
+Counter created successfully!
+real time: 0.000000
+user time: 0.000000
+sys time: 0.000000
+
+Found free index (0)!
+Saved!
+real time: 0.010000
+user time: 0.000000
+sys time: 0.000000
+
+      16     704    4416 ./tests/test1.txt
+real time: 0.000000
+user time: 0.000000
+sys time: 0.000000
+
+Successfully removed block at given index!
+real time: 0.000000
+user time: 0.000000
+sys time: 0.000000
+
+Action completed successfully!
+real time: 0.000000
+user time: 0.000000
+sys time: 0.000000
+

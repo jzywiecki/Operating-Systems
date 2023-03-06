@@ -1,0 +1,25 @@
+Counter created successfully!
+real time: 0.090000
+user time: 0.000000
+sys time: 0.000000
+
+Structure is not made yet.
+real time: 0.000000
+user time: 0.000000
+sys time: 0.000000
+
+Incorrect action!
+real time: 0.000000
+user time: 0.000000
+sys time: 0.000000
+
+Structure is not made yet!
+real time: 0.000000
+user time: 0.000000
+sys time: 0.000000
+
+Structure is not made yet, so you can't delete it.
+real time: 0.000000
+user time: 0.000000
+sys time: 0.000000
+
