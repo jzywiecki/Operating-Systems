@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <libc.h>
-#include <stdbool.h>
 
 typedef struct {
     char **pointers_array; //array of pointers
@@ -12,16 +11,16 @@ typedef struct {
 } Counter;
 
 //function creating Counter structure
-bool create_counter(int max_size);
+void create_counter(int max_size);
 
 //function removing block at given index in Counter structure
-bool remove_block(int index);
+void remove_block(int index);
 
 //function adding block at given index in Counter structure
-bool add_block(char* block, int index);
+void add_block(char* block, int index);
 
-//function that free memory of Counter
-bool free_pointers_array();
+//function that free memory used by Counter
+void free_counter();
 
 //function that gets block content at given index
 void get_block_content(int index);
@@ -33,6 +32,6 @@ int get_free_index();
 char* create_command(char* file_name);
 
 //counting procedure for given file name
-void counting_procedure(Counter *structure, char* file_name);
+void counting_procedure(char* file_name);
 
 #endif //LIBRARY_H

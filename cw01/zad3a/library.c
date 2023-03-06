@@ -2,74 +2,72 @@
 
 #include <stdio.h>
 #include <libc.h>
-#include <stdbool.h>
 #include <unistd.h>
 
 Counter *counter;
 
 
-bool create_counter(int max_size){
+void create_counter(int max_size){
     if (max_size <= 0){ //check if max_size of our structure is at least 1
         printf("Array length should be greater than 0!\n");
-        return false;
+        return;
     }
     counter = malloc(sizeof(Counter)); //alloc memory for our structure
     counter->max_size = max_size;
     counter->size = 0;
     counter->pointers_array = calloc(max_size, sizeof(char*)); //alloc memory for array of pointers
     printf("Counter created successfully!\n");
-    return true;
 }
 
 
-bool remove_block(int index){
+void remove_block(int index){
     if (counter == NULL){ //check if structure exists
         printf("Structure is not made yet!\n");
-        return false;
+        return;
     }
     if( index < 0 || index >= counter->max_size) //check if index is proper
     {
         printf("Indexes of structure are above 0 and under max_size!\n");
-        return false;
+        return;
     }
     if (counter->pointers_array[index] == NULL){ //check if there is block saved at given index
         printf("There is no block saved at given index!\n");
-        return false;
+        return;
     }
     if (counter->size == 0){ //check if array is empty
         printf("Array is empty!\n");
+        return;
     }
     counter->size--;
     free(counter->pointers_array[index]);
     counter->pointers_array[index] = NULL;
     printf("Successfully removed block at given index!\n");
-    return true;
 }
 
-bool add_block(char* block, int index){
+void add_block(char* block, int index){
     if (counter == NULL){ //check if structure exists
         printf("Structure is not made yet!\n");
-        return false;
+        return;
     }
     if( index < 0 || index >= counter->max_size)
     {
         printf("Indexes of structure are above 0 and under max_size!\n"); //check if index is proper
-        return false;
+        return;
     }
     if (counter->size == counter->max_size){ //check if array is full
         printf("Array is full!\n");
+        return;
     }
     counter->size++;
     counter->pointers_array[index] = (char *) calloc(strlen(block) + 1, sizeof(char));
     strcpy(counter->pointers_array[index], block);
     printf("Saved!\n");
-    return true;
 }
 
-bool free_pointers_array(){
+void free_counter(){
     if (counter == NULL){ //check if structure exists
         printf("Structure is not made yet, so you can't delete it.\n");
-        return false;
+        return;
     }
     for (int i = 0; i < counter->max_size; i++){ //free all pointers of pointers_array
         if (counter->pointers_array[i] != NULL){
@@ -80,7 +78,6 @@ bool free_pointers_array(){
     free(counter); //free the whole structure
     printf("Action completed successfully!\n");
     counter = NULL;
-    return true;
 }
 
 void get_block_content(int index){
@@ -133,13 +130,13 @@ char* create_command(char* file_name){
     return command;
 }
 
-void counting_procedure(Counter *structure, char* file_name){
+void counting_procedure(char* file_name){
     //check if structure is already made and if it has empty place to store new data
-    if (structure == NULL){
+    if (counter == NULL){
         printf("Structure is not made yet.\n");
         return;
     }
-    if (structure->size == structure->max_size){
+    if (counter->size == counter->max_size){
         printf("Structure is already full.\n");
         return;
     }

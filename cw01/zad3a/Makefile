@@ -13,7 +13,9 @@ shared:
 	@gcc $(CFLAGS) -fPIC -shared library.o -o liblibrary.so
 
 dynamic:
-
+	@echo "dynamic"
+	@gcc $(CFLAGS) -fPIC -c library.c -o library.o
+	@gcc $(CFLAGS) -fPIC -shared library.o -o liblibrary.so
 
 
 clean:
@@ -30,7 +32,8 @@ compile_shared: shared
 	@gcc -o main -L./ main.o -llibrary
 
 compile_dynamic: dynamic
-
+	@make dynamic
+	@gcc main.c -o main -ldl -D DYNAMIC
 
 
 
