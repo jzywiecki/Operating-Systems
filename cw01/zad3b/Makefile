@@ -1,5 +1,7 @@
 CFLAGS = -Wall
 
+OPT=-O0
+
 all: compile_static compile_shared compile_dynamic
 
 static:
@@ -24,29 +26,32 @@ clean:
 
 compile_static:
 	@make static
-	@gcc main.c library.c -o main
+	@gcc main.c library.c -o main $(opt)
 
 compile_shared:
 	@make shared
 	@gcc -c main.c
-	@gcc -o main -L./ main.o -llibrary
+	@gcc -o main -L./ main.o -llibrary $(opt)
 
 compile_dynamic:
 	@make dynamic
-	@gcc main.c -o main -ldl -D DYNAMIC
+	@gcc main.c -o main -ldl -D DYNAMIC $(opt)
 
 
 test_static:
-	@make compile_static
-	@./main < ./tests/test.txt > ./results/results_static.txt
+	@read opt; \
+	make compile_static OPT=$$opt; \
+	./main < ./tests/test.txt > ./results/results_static_$$opt.txt;
 
 test_shared:
-	@make compile_shared
-	@./main < ./tests/test.txt > ./results/results_shared.txt
+	@read opt; \
+	make compile_shared OPT=$$opt; \
+	./main < ./tests/test.txt > ./results/results_shared_$$opt.txt;
 
 test_dynamic:
-	@make compile_dynamic
-	@./main < ./tests/test.txt > ./results/results_dynamic.txt
+	@read opt; \
+	make compile_dynamic OPT=$$opt; \
+	./main < ./tests/test.txt > ./results/results_dynamic_$$opt.txt;
 
 
 #@ - don't echo on the output

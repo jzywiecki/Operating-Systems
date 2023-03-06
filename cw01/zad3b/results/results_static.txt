@@ -1,24 +1,25 @@
 Counter created successfully!
-real time: 0.190000
-user time: 0.000000
-sys time: 0.000000
-
-Structure is not made yet.
 real time: 0.000000
 user time: 0.000000
 sys time: 0.000000
 
-Incorrect action!
+Found free index (0)!
+Saved!
+real time: 0.030000
+user time: 0.000000
+sys time: 0.000000
+
+      16     704    4416 ./tests/test1.txt
 real time: 0.000000
 user time: 0.000000
 sys time: 0.000000
 
-Structure is not made yet!
+Successfully removed block at given index!
 real time: 0.000000
 user time: 0.000000
 sys time: 0.000000
 
-Structure is not made yet, so you can't delete it.
+Action completed successfully!
 real time: 0.000000
 user time: 0.000000
 sys time: 0.000000
