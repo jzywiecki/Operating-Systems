@@ -4,11 +4,11 @@
 #include <unistd.h>
 
 Counter* create_counter(int max_size){
-    Counter *counter;
     if (max_size <= 0){ //check if max_size of our structure is at least 1
         printf("Array length should be greater than 0!\n");
         return NULL;
     }
+    Counter *counter;
     counter = malloc(sizeof(Counter)); //alloc memory for our structure
     counter->max_size = max_size;
     counter->size = 0;
@@ -79,8 +79,17 @@ void free_counter(Counter* counter){
 }
 
 void get_block_content(Counter* counter, int index){
-    if (counter == NULL || index < 0 || index >= counter->max_size || counter->pointers_array[index] == NULL){ //check if structure exists, index is proper and there is saved block at given idnex
-        printf("Incorrect action!\n");
+    if (counter == NULL){ //check if structure exists
+        printf("Structure is not made yet!\n");
+        return;
+    }
+    else if(index < 0 || index >= counter->max_size){ // checks if index is proper
+        printf("Indexes of structure are above 0 and under max_size!\n");
+        return;
+    }
+    else if (counter->pointers_array[index] == NULL){ //checks if there is saved block at given index
+        printf("Block at given index is empty!\n");
+        return;
     }
     else {
         printf("%s\n", counter->pointers_array[index]);
@@ -180,5 +189,11 @@ void counting_procedure(Counter* counter, char* file_name){
     system("rm -r -f tmp");
 
     //adding block about our analysed file at free index
-    add_block(counter, file_content, get_free_index(counter));
+    int index = get_free_index(counter);
+    if (index != -1) {
+        add_block(counter, file_content, index);
+    }
+    else{
+        printf("Error in finding free index in pointer array!\n");
+    }
 }

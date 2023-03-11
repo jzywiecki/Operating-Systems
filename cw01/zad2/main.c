@@ -13,14 +13,14 @@
 
 char* sep = " \n";
 
-long double time_sec(clock_t t1, clock_t t2){
+long double time_difference(clock_t t1, clock_t t2){
     return (long double)(t2 - t1) / sysconf(_SC_CLK_TCK);
 }
 
 void print_results(clock_t clock_start, clock_t clock_end, struct tms start_tms, struct tms end_tms){
-    printf("real time: %Lf\n", time_sec(clock_start, clock_end));
-    printf("user time: %Lf\n", time_sec(start_tms.tms_utime, end_tms.tms_utime));
-    printf("sys time: %Lf\n\n", time_sec(start_tms.tms_stime, end_tms.tms_stime));
+    printf("real time: %Lf\n", time_difference(clock_start, clock_end));
+    printf("user time: %Lf\n", time_difference(start_tms.tms_utime, end_tms.tms_utime));
+    printf("sys time: %Lf\n\n", time_difference(start_tms.tms_stime, end_tms.tms_stime));
 }
 
 clock_t clock_start;
@@ -70,10 +70,7 @@ int main() {
             printf("Command could not be recognised. Check spelling and try again!\n");
         }
     }
-    return 0;
 }
-
-
 
 
 void init_handler(char *operator) {

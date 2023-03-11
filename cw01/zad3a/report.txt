@@ -81,4 +81,4 @@ user time: 0.000000
 sys time: 0.000000
 
 
-Z wyników doświadczenia wynika, że najwolniejszy czas wykonania ma Dynamic, najszybszy zaś Static
+Z wynikow doswiadczenia wynika, ze najwolniejszy czas wykonania ma Dynamic, najszybszy zas Static

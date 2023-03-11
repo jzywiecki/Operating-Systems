@@ -249,4 +249,4 @@ real time: 0.000000
 user time: 0.000000
 sys time: 0.000000
 
-Z wyników doświadczenia wynikają podobne wnioski jak z 3a, widzimy tu też skutki optymalizacji.
+Z wynikow doswiadczenia wynikaja podobne wnioski jak z 3a, widzimy tu tez skutki optymalizacji.
