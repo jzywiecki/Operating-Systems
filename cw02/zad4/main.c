@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <sys/fcntl.h>
 #include "timers.h"
-#include <dirent.h>
 #include <sys/stat.h>
 #include <ftw.h>
 
@@ -9,6 +8,7 @@ clock_t clock_start;
 clock_t clock_end;
 struct tms start_tms;
 struct tms end_tms;
+
 long long size = 0;
 struct stat path_stat;
 
@@ -21,19 +21,24 @@ int print_info(const char *fpath, const struct stat *sb, int tflag){ //callback 
 }
 
 void search_dir_with_subdirs(char* dir){
-    DIR *dir_path;
-
-    int error = ftw(dir, print_info, 1);
-
-    if (error == -1) {
-        fprintf(stderr, "[TREE SIZE] FTW error has occured ()\n");
-        return;
+    if (ftw(dir, print_info, 1) != -1){
+        printf("Total: %lld\n", size);
     }
-
-    printf("Total: %lld", size);
+    else{
+        printf("Error occurred while executing ftw!\n");
+    }
 }
 
-int main(int argc, char** argv){
-    search_dir_with_subdirs("./");
+int main(int argc, char* argv[]){
+    if (argc != 2){
+        printf("Not enough or too much arguments!\n");
+        return -1;
+    }
+    clock_start = times(&start_tms);
+
+    search_dir_with_subdirs(argv[1]);
+
+    clock_end = times(&end_tms);
+    print_results(clock_start, clock_end, start_tms, end_tms);
 }
 

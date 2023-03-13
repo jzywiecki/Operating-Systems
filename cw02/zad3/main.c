@@ -9,34 +9,43 @@ clock_t clock_end;
 struct tms start_tms;
 struct tms end_tms;
 
-
 void search_dir(char* dir){
-    DIR *dir_path;
-    long long size = 0; //it should be off_t
-    struct dirent *current_position;
-    struct stat path_stat;
+    DIR *dir_path; //declare directory
+    long long size = 0;
+    struct dirent *current_position; //structure that allows us to read and manipulate directory entries
+    struct stat path_stat; //structure to get information about file
 
-    if((dir_path = opendir(dir)) == NULL) {
-        fprintf(stderr,"cannot open directory: %s\n", dir);
+    dir_path = opendir(dir);
+    if(dir_path == NULL) { //simple error holding
+        printf("Cannot open directory!\n");
         return;
     }
-    chdir(dir);
-    while((current_position = readdir(dir_path)) != NULL) {
-        stat(current_position->d_name, &path_stat);
-        if(!S_ISDIR(path_stat.st_mode)){
-            size += path_stat.st_size;
-            printf("%s: %lld bytes\n", current_position->d_name, path_stat.st_size);
+
+    while((current_position = readdir(dir_path)) != NULL) { //while there are objects in our directory
+        stat(current_position->d_name, &path_stat); //get stats about file
+        if(!S_ISDIR(path_stat.st_mode)){ //if file is not directory
+            size += path_stat.st_size; //add size to total size
+            printf("%s: %lld bytes\n", current_position->d_name, path_stat.st_size); //print info
         }
         else{
             continue;
         }
     }
-    printf("Total: %lld", size);
+    printf("Total: %lld\n", size);
 }
 
 
 
-int main(){
-    search_dir("./");
+int main(int argc, char* argv[]){
+    if (argc != 2){
+        printf("Not enough or too much arguments!\n");
+        return -1;
+    }
+    clock_start = times(&start_tms);
+
+    search_dir(argv[1]);
+
+    clock_end = times(&end_tms);
+    print_results(clock_start, clock_end, start_tms, end_tms);
 }
 
