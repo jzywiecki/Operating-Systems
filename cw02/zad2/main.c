@@ -17,7 +17,7 @@ void reverse_file_bytes(char* file_from_name, char* file_to_name){
         printf("Could not open input file!\n");
         return;
     }
-    if (file_to == NULL){ //if we dont close file_from there we potentially will have memory leaks, file would remain open etc.
+    if (file_to == NULL){ //if we dont close file_from there we potentially will have resources leaks, file would remain open etc.
         printf("Could not open output file!\n");
         fclose(file_from);
         return;
@@ -46,7 +46,7 @@ void reverse_file_blocks(char* file_from_name, char* file_to_name){
         printf("Could not open input file!\n");
         return;
     }
-    if (file_to == NULL){ //if we dont close file_from there we potentially will have memory leaks, file would remain open etc.
+    if (file_to == NULL){ //if we dont close file_from there we potentially will have resources leaks, file would remain open etc.
         printf("Could not open output file!\n");
         fclose(file_from);
         return;
@@ -89,6 +89,7 @@ void reverse_file_blocks(char* file_from_name, char* file_to_name){
 int main(int argc, char* argv[]){
     if (argc != 3){
         printf("Not enough or too much arguments!\n");
+        return -1;
     }
     printf("Byte after Byte:\n");
     clock_start = times(&start_tms);
@@ -100,5 +101,6 @@ int main(int argc, char* argv[]){
     reverse_file_blocks(argv[1], argv[2]);
     clock_end = times(&end_tms);
     print_results(clock_start, clock_end, start_tms, end_tms);
+    return 0;
 }
 

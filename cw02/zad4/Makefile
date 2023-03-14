@@ -12,4 +12,5 @@ test:
 	@./main ./
 
 clean:
-	@rm main
+	@echo "Removing everything but the source files!"
+	@rm -f *.o *.a *.so main

@@ -17,7 +17,7 @@ void search_dir(char* dir){
 
     dir_path = opendir(dir);
     if(dir_path == NULL) { //simple error holding
-        printf("Cannot open directory!\n");
+        printf("Could not open directory!\n");
         return;
     }
 
@@ -47,5 +47,6 @@ int main(int argc, char* argv[]){
 
     clock_end = times(&end_tms);
     print_results(clock_start, clock_end, start_tms, end_tms);
+    return 0;
 }
 

@@ -13,4 +13,5 @@ test: #to test separately functions you have to comment code in main.c
 	@./main a c file_from.txt file_to.txt
 
 clean:
-	@rm main
+	@echo "Removing everything but the source files!"
+	@rm -f *.o *.a *.so main

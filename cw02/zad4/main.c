@@ -40,5 +40,6 @@ int main(int argc, char* argv[]){
 
     clock_end = times(&end_tms);
     print_results(clock_start, clock_end, start_tms, end_tms);
+    return 0;
 }
 

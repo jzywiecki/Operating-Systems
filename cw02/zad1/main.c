@@ -2,7 +2,6 @@
 #include <sys/fcntl.h>
 #include "timers.h"
 
-
 clock_t clock_start;
 clock_t clock_end;
 struct tms start_tms;
@@ -16,7 +15,7 @@ void switch_letters_lib(char from, char to, char* file_from_name, char* file_to_
         printf("Could not open input file!\n");
         return;
     }
-    if (file_to == NULL){ //if we dont close file_from there we potentially will have memory leaks, file would remain open etc.
+    if (file_to == NULL){ //if we dont close file_from there we potentially will have resources leaks, file would remain open etc.
         printf("Could not open output file!\n");
         fclose(file_from);
         return;
@@ -44,7 +43,7 @@ void switch_letters_sys(char from, char to, char* file_from_name, char* file_to_
         printf("Could not open input file!\n");
         return;
     }
-    if (file_to == -1){ //if we dont close file_from there we potentially will have memory leaks, file would remain open etc.
+    if (file_to == -1){ //if we dont close file_from there we potentially will have resources leaks, file would remain open etc.
         printf("Could not open output file!\n");
         close(file_from);
         return;
@@ -63,6 +62,7 @@ void switch_letters_sys(char from, char to, char* file_from_name, char* file_to_
 int main(int argc, char* argv[]){
     if (argc != 5){
         printf("Not enough or too much arguments!\n");
+        return -1;
     }
     printf("Library:\n");
     clock_start = times(&start_tms);
@@ -75,5 +75,6 @@ int main(int argc, char* argv[]){
     switch_letters_sys(argv[1][0], argv[2][0], argv[3], argv[4]);
     clock_end = times(&end_tms);
     print_results(clock_start, clock_end, start_tms, end_tms);
+    return 0;
 }
 
