@@ -14,14 +14,19 @@ int main(int argc, char * argv[]){
 
     int number_of_processes = atoi(argv[1]); //odczytanie ilosci procesow
 
+    if (number_of_processes <= 0){ // atoi returns 0 if an error occured, so it is handling it as well
+        printf("Bad number of arguments!\n");
+        exit(EXIT_FAILURE);
+    }
+
     for (int i = 0; i < number_of_processes; i++){
-        pid_t pid = fork(); //forkowanie
+        pid_t pid = fork();
         if (pid == 0){ //dla dziecka
             printf("Parent: %d, child: %d\n", getppid(), getpid()); //wypisanie dziecka pid i parentpid
-            exit(EXIT_SUCCESS); //zakonczneie procesu
+            exit(EXIT_SUCCESS); //prawidlowe zakonczenie procesu
         }
         else{
-            waitpid(pid, NULL, 0); //inaczej czekamy na dziecko (jego pid jest zapisane pod zmienną pid)
+            waitpid(pid, NULL, 0); //proces macierzysty czeka na dziecko (pid dziecka jest zapisane pod zmienną pid)
         }
     }
 

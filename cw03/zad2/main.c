@@ -13,8 +13,8 @@ int main(int argc, char * argv[]){
     }
 
     setbuf(stdout, NULL); // wyłączenie buforowania wyjścia
-    printf("Nazwa programu: %s ", argv[0]); //wypisanie nazwy programu
-    execl("/bin/ls", "ls", "-l", argv[1], NULL); //wywolanie bin/ls ls z argumentem -l i katalogiem
+    printf("Program name: %s ", argv[0]); //wypisanie nazwy programu bez znaku konca linii
+    execl("/bin/ls", "ls", "-l", argv[1], NULL); //wywolanie bin/ls ls z argumentem -l (czytelniej) i katalogiem
 
     //to wykona sie tylko w przypadku, kiedy wystapi blad!
     printf("An error occured executing execl!");
