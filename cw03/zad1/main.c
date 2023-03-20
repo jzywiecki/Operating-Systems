@@ -15,20 +15,20 @@ int main(int argc, char * argv[]){
         exit(EXIT_FAILURE);
     }
 
-    int number_of_processes = atoi(argv[1]);
+    int number_of_processes = atoi(argv[1]); //odczytanie ilosci procesow
 
     for (int i = 0; i < number_of_processes; i++){
-        pid_t pid = fork();
-        if (pid == 0){
-            printf("Parent: %d, child: %d\n", getppid(), getpid());
-            exit(EXIT_SUCCESS);
+        pid_t pid = fork(); //forkowanie
+        if (pid == 0){ //dla dziecka
+            printf("Parent: %d, child: %d\n", getppid(), getpid()); //wypisanie dziecka pid i parentpid
+            exit(EXIT_SUCCESS); //zakonczneie procesu
         }
         else{
-            waitpid(pid, NULL, 0);
+            waitpid(pid, NULL, 0); //inaczej czekamy na dziecko (jego pid jest zapisane pod zmienną pid)
         }
     }
 
-    printf("%s\n", argv[1]);
+    printf("%s\n", argv[1]); //wypisanie ilosci procesow lacznie
     return 0;
 }
 

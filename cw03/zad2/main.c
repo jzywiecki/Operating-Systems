@@ -18,6 +18,6 @@ int main(int argc, char * argv[]){
 
     //to wykona sie tylko w przypadku, kiedy wystapi blad!
     printf("An error occured executing execl!");
-    exit(EXIT_FAILURE)
+    exit(EXIT_FAILURE);
 }
 
