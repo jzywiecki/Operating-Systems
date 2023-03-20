@@ -14,8 +14,8 @@ int main(int argc, char * argv[]){
 
     int number_of_processes = atoi(argv[1]); //odczytanie ilosci procesow
 
-    if (number_of_processes <= 0){ // atoi returns 0 if an error occured, so it is handling it as well
-        printf("Bad number of arguments!\n");
+    if (number_of_processes <= 0){ // atoi zwraca 0 kiedy wystapi blad, wiec to rowniez obslugujemy
+        printf("Bad number of arguments or argument is illegal!\n");
         exit(EXIT_FAILURE);
     }
 

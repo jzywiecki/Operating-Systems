@@ -20,27 +20,19 @@ void recursive_call_directory(char* dir_path, char* string_to_find){
         }
 
         char path[PATH_MAX];
-        snprintf(path, sizeof(path), "%s/%s", dir_path, entry->d_name); //konstrukcja sciezki do pliku lub nastepnego folderu
+        snprintf(path, sizeof(path), "%s/%s", dir_path, entry->d_name); //konstrukcja sciezki do pliku lub katalogu
 
-        struct stat statbuf; //potrzebny do sprawdzania informacji na temat pliku/katalogu
-        if (stat(path, &statbuf) == -1) {
-            perror("stat");
-            continue;
-        }
+        struct stat path_stat; //potrzebny do sprawdzania informacji na temat pliku/katalogu
+        stat(path, &path_stat);
 
-        if (S_ISDIR(statbuf.st_mode)){ //katalog
+        if (S_ISDIR(path_stat.st_mode)){ //katalog
             pid_t pid = fork(); //fork
-            if (pid == -1){ //obsluga bledu przy forkowaniu
-                perror("fork");
-                continue;
-            }
-
             if (pid == 0){ //dla nowo utworzonego procesu wchodzimy do tego katalogu rekursywnie, w ten sposob uzyskamy drzewo katalogow i procesow
                 recursive_call_directory(path, string_to_find);
                 exit(EXIT_SUCCESS);
             }
         }
-        else if (S_ISREG(statbuf.st_mode)){ //plik
+        else if (S_ISREG(path_stat.st_mode)){ //plik
             FILE *file = fopen(path, "r");
             if (file == NULL){ //obsluga bledow przy otwarciu pliku
                 perror("fopen");
@@ -59,7 +51,6 @@ void recursive_call_directory(char* dir_path, char* string_to_find){
             free(line);
             fclose(file);
         }
-
     }
 
     if (closedir(dir) == -1) {
