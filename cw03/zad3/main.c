@@ -9,8 +9,8 @@
 void recursive_call_directory(char* dir_path, char* string_to_find){
     DIR *dir = opendir(dir_path);
     if (dir == NULL){ //katalog nie istnieje
-        perror("opendir");
-        exit(EXIT_FAILURE);
+        perror("opendir"); //obsluga bledu
+        exit(1);
     }
 
     struct dirent *entry;
@@ -29,14 +29,14 @@ void recursive_call_directory(char* dir_path, char* string_to_find){
             pid_t pid = fork(); //fork
             if (pid == 0){ //dla nowo utworzonego procesu wchodzimy do tego katalogu rekursywnie, w ten sposob uzyskamy drzewo katalogow i procesow
                 recursive_call_directory(path, string_to_find);
-                exit(EXIT_SUCCESS);
+                exit(0);
             }
         }
         else if (S_ISREG(path_stat.st_mode)){ //plik
             FILE *file = fopen(path, "r");
             if (file == NULL){ //obsluga bledow przy otwarciu pliku
-                perror("fopen");
-                continue;
+                perror("fopen"); //obsluga bledu
+                continue; //nie musimy konczyc procesu, bo uwzgledniamy, ze niektorych plikow nie mozemy otworzyc
             }
 
             size_t line_len = strlen(string_to_find); //dlugosc sprawdzanego fragmentu
@@ -54,19 +54,19 @@ void recursive_call_directory(char* dir_path, char* string_to_find){
     }
 
     if (closedir(dir) == -1) {
-        perror("closedir");
-        exit(EXIT_FAILURE);
+        perror("closedir"); //obsluga bledu
+        exit(1);
     }
 }
 
 int main(int argc, char* argv[]){
     if (argc < 3){
         printf("Not enaugh arguments!\n");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
     if (argc > 3){
         printf("Too many arguments!\n");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     recursive_call_directory(argv[1], argv[2]);
