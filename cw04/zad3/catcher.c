@@ -7,6 +7,7 @@
 
 
 int mode_changes = 0;
+volatile sig_atomic_t stop_mode_four = 0;
 
 void handler(int signum, siginfo_t *info, void *context){
     printf("Signal SIGUSR1 received by catcher\n");
@@ -21,6 +22,7 @@ void handler(int signum, siginfo_t *info, void *context){
             for (int i = 1; i <= 100; i++){
                 printf("%d ", i);
             }
+            printf("\n");
             break;
         case 2:
             time_t current_time = time(NULL);
@@ -35,6 +37,10 @@ void handler(int signum, siginfo_t *info, void *context){
                 time_t t = time(NULL);
                 printf("%s", ctime(&t));
                 sleep(1);
+                if (stop_mode_four) {
+                    stop_mode_four = 0;
+                    break;
+                }
             }
             break;
         case 5:
@@ -63,12 +69,19 @@ int main(){
         exit(EXIT_FAILURE);
     }
 
+    if (signal(SIGUSR2, SIG_IGN) == SIG_ERR) {
+        perror("Catcher: Error setting signal handler");
+        exit(EXIT_FAILURE);
+    }
+
     printf("Catcher: My PID is %d\n", getpid());
     printf("Catcher: Waiting for signals...\n");
 
     while (1) {
         sigset_t mask;
         sigemptyset(&mask);
+        sigaddset(&mask, SIGUSR2);
+        sigprocmask(SIG_SETMASK, &mask, NULL);
         sigsuspend(&mask);
     }
 

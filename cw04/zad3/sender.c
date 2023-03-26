@@ -22,9 +22,9 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     pid_t catcher_pid = atoi(argv[1]);
-    int modes_to_send[argc-1];
+    int modes_to_send[argc-2];
 
-    for (int i = 0; i < argc; i++) {
+    for (int i = 0; i < argc-2; i++) {
         modes_to_send[i] = atoi(argv[i+2]);
     }
 
@@ -40,19 +40,14 @@ int main(int argc, char *argv[]) {
     }
 
     for (int i = 0; i < argc - 2; i++) {
-        mode = atoi(argv[i+2]);
-
+        mode = modes_to_send[i];
         requests++;
         printf("Sender: Sending SIGUSR1 to catcher with PID %d, mode %d\n", catcher_pid, mode);
-
-
-
 
         if (sigqueue(catcher_pid, SIGUSR1, (union sigval) mode) == -1) {
             perror("sigqueue");
             exit(1);
         }
-
 
         while (!received_ack) {
             sigemptyset(&mask);
@@ -61,15 +56,8 @@ int main(int argc, char *argv[]) {
         }
 
         received_ack = 0;
-
-
-
-
-
-
     }
 
     printf("Sender: All requests sent and acknowledged. Exiting.\n");
     return 0;
 }
-
