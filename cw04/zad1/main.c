@@ -7,7 +7,7 @@
 
 
 void handler(int signum){
-    printf("Recieved signal: %d", signum);
+    printf("Recieved signal: %d\n", signum);
 }
 
 int main(int argc, char* argv[]){
@@ -62,6 +62,5 @@ int main(int argc, char* argv[]){
         exit(0);
     }
 
-
-
+     return 0;
 }

@@ -1,11 +1,13 @@
 
-all: main
+all: tests
 
-main:
-	@gcc main.c -o main
+tests:
+	@gcc siginfo.c -o siginfo
+	@gcc resethand.c -o resethand
+	@gcc nodefer.c -o nodefer
 
 clean:
-	@rm main
+	@rm siginfo resethand nodefer
 
 
 

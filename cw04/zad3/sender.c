@@ -3,61 +3,57 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <time.h>
 
-volatile sig_atomic_t received_ack = 0;
-volatile sig_atomic_t requests = 0;
+volatile sig_atomic_t received = 0; //zmienne lotne, atomic
 volatile sig_atomic_t mode = 0;
 
-void signal_handler(int sig, siginfo_t *info, void *context) {
-    if (sig == SIGUSR1) {
-        printf("Sender: Received SIGUSR1 from catcher!\n");
-        received_ack = 1;
+void signal_handler(int sig) {
+    if (sig == SIGUSR1){
+        printf("Catcher finished action!\n");
+    }
+    if (sig == SIGUSR2){ //jesli otrzymamy potwierdzenie od catchera
+        printf("Got confirmation signal from catcher!\n");
+        received = 1; //ustawiam received na 1, traktuje go jako bool
     }
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
+    if (argc < 3) { //obsluga ilosci argumentów
         printf("Not enough arguments!\n");
         exit(1);
     }
-    pid_t catcher_pid = atoi(argv[1]);
-    int modes_to_send[argc-2];
 
+    pid_t catcher_pid = atoi(argv[1]); //wyciagamy z 1 argumentu pid catchera, aby potem moc wysylac mu sygnaly
+    int modes_to_send[argc-2]; //tablica z trybami do wyslania
     for (int i = 0; i < argc-2; i++) {
-        modes_to_send[i] = atoi(argv[i+2]);
+        modes_to_send[i] = atoi(argv[i+2]); //wczytujemy do niej te tryby, ktore nastepnie bedziemy wysylac do naszego catchera
     }
 
     struct sigaction sa;
     sigset_t mask;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_SIGINFO;
-    sa.sa_sigaction = signal_handler;
+    sigemptyset(&sa.sa_mask); //pusta maska
+    sa.sa_handler = signal_handler; //instalujemy handler
+    sigaction(SIGUSR1, &sa, NULL); //przypisujemy sa do obslugi SIGUSR1
+    sigaction(SIGUSR2, &sa, NULL); //przypisujemy sa do obslugi SIGUSR2
 
-    if (sigaction(SIGUSR1, &sa, NULL) == -1) {
-        perror("sigaction");
-        exit(1);
-    }
-
-    for (int i = 0; i < argc - 2; i++) {
+    for (int i = 0; i < argc - 2; i++) { //iterujemy przez wszystkie zadane tryby pracy
         mode = modes_to_send[i];
-        requests++;
-        printf("Sender: Sending SIGUSR1 to catcher with PID %d, mode %d\n", catcher_pid, mode);
 
-        if (sigqueue(catcher_pid, SIGUSR1, (union sigval) mode) == -1) {
-            perror("sigqueue");
-            exit(1);
-        }
+        printf("-------------------- %d --------------------\n", mode);
+        printf("Sending SIGUSR1 to catcher with PID %d, mode %d\n", catcher_pid, mode);
 
-        while (!received_ack) {
+        sigqueue(catcher_pid, SIGUSR1, (union sigval) mode); //wyslanie sygnalu do catchera
+
+        printf("Waiting for signal to be confirmed!\n");
+
+        while (!received) { //do czasu az sygnal potwierdzajacy nie otrzymany
             sigemptyset(&mask);
-            sigaddset(&mask, SIGUSR1);
-            sigsuspend(&mask);
+            sigaddset(&mask, SIGUSR1); //maska z sygnalem SIGUSR1
+            sigsuspend(&mask); // odebranie sygnalu oczekujacego, oczekujemy do czasu otrzymania sygnalu
         }
 
-        received_ack = 0;
+        printf("Done!\n");
+        received = 0; //wyzerowanie potwierdzenia (wartosc bool)
     }
-
-    printf("Sender: All requests sent and acknowledged. Exiting.\n");
     return 0;
 }

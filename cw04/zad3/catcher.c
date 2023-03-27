@@ -9,45 +9,46 @@ int mode_changes = 0;
 volatile sig_atomic_t mode = 0;
 
 void handler(int signum, siginfo_t *info, void *context) {
-    printf("Signal SIGUSR1 received by catcher\n");
-    kill(info->si_pid, SIGUSR2);
+    setbuf(stdout, NULL); //ustawiam bufor na NULL dla bezpieczenstwa
+    printf("Signal received by catcher!\n");
+    kill(info->si_pid, SIGUSR2); //wyslanie SIGUSR2 do sendera, potwierdzenie otrzymania
 
-    int new_mode = info->si_value.sival_int;
+    int new_mode = info->si_value.sival_int; //wyciagniecie jaki tryb pracy mamy przyjąć
     printf("Mode received: %d\n", new_mode);
 
-    switch (new_mode) {
+    switch (new_mode) { //ustawienie trybu pracy
         case 1:
-            for (int i = 1; i <= 100; i++){
+            mode_changes++;
+            for (int i = 1; i <= 100; i++){ //wypisywanie cyfr
                 printf("%d ", i);
             }
             printf("\n");
             break;
         case 2: {
-            time_t current_time = time(NULL);
+            mode_changes++;
+            time_t current_time = time(NULL); //czas
             printf("%s", ctime(&current_time));
             break;
         }
         case 3:
             mode_changes++;
-            printf("Number of mode changes received: %d\n", mode_changes);
+            printf("Number of mode changes received: %d\n", mode_changes); //ilosc zmian trybu pracy
             break;
         case 4:
-            mode = 4;
+            mode_changes++; //przypadek nieskonczonej petli wypisujacej czas co sekunde rozwiazujemy to troche nizej w kodzie
             break;
         case 5:
-            exit(1);
+            mode_changes++;
+            exit(0); //zakonczenie pracy
             break;
         default:
-            printf("Invalid mode: %d\n", new_mode);
+            printf("Invalid mode: %d\n", new_mode); //obsluga bledow
             break;
     }
 
     union sigval value;
     value.sival_int = new_mode;
-    if (sigqueue(info->si_pid, SIGUSR1, value) == -1) {
-        perror("Catcher: Error sending signal to sender");
-        exit(1);
-    }
+    sigqueue(info->si_pid, SIGUSR1, value); //wyslanie sygnalu SIGUSR1 do sendera potwierdzajace zakonczenie wykonywania
 
     mode = new_mode;
 }
@@ -56,28 +57,16 @@ int main() {
     struct sigaction action;
     action.sa_flags = SA_SIGINFO;
     action.sa_sigaction = handler;
-    if (sigaction(SIGUSR1, &action, NULL) == -1) {
-        perror("Catcher: Error setting signal handler");
-        exit(EXIT_FAILURE);
-    }
+    sigaction(SIGUSR1, &action, NULL); //ustawienie handlera dla SIGUSR1
 
-    printf("Catcher: My PID is %d\n", getpid());
-    printf("Catcher: Waiting for signals...\n");
+    printf("My PID is %d\n", getpid()); //wypisanie PID catchera
 
     while (1) {
-        sigset_t mask;
-        sigemptyset(&mask);
-        sigaddset(&mask, SIGUSR2);
-        sigprocmask(SIG_BLOCK, &mask, NULL);
-
-        // Wait for a signal to be received
-        while (mode == 4) {
+        while (mode == 4) { //obsluga trybu nieskonczonej petli
             time_t current_time = time(NULL);
             printf("%s", ctime(&current_time));
             sleep(1);
         }
-
-        sigsuspend(&mask);
     }
 
     return 0;
