@@ -2,9 +2,12 @@
 all: tests
 
 tests:
-	@gcc siginfo.c -o siginfo
-	@gcc resethand.c -o resethand
-	@gcc nodefer.c -o nodefer
+	@gcc siginfo.c -Wall -o siginfo
+	@./siginfo
+	@gcc nodefer.c -Wall -o nodefer
+	@./nodefer
+	@gcc resethand.c -Wall -o resethand
+	@./resethand
 
 clean:
 	@rm siginfo resethand nodefer

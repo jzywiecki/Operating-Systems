@@ -18,7 +18,7 @@ int main() {
     sa.sa_flags = SA_SIGINFO | SA_RESETHAND; //przypisujemy testowaną flagę
 
     sigaction(SIGINT, &sa, NULL); //wskazujemy obslugiwanie SIGINT'a
-
+    printf("RESETHAND TEST\n");
     printf("Sending SIGINT signal to the process...\n");
     raise(SIGINT); //pierwszy sygnal
 

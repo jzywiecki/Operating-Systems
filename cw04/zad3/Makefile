@@ -1,8 +1,8 @@
 
 
 main:
-	@gcc catcher.c -o catcher
-	@gcc sender.c -o sender
+	@gcc catcher.c -Wall -o catcher
+	@gcc sender.c -Wall -o sender
 
 
 clean:

@@ -1,0 +1,23 @@
+PENDING:
+```
+SIGUSR1 masked (for pending) in parent
+[FORK] SIGUSR1 is not pending in child!
+[EXEC] SIGUSR1 is pending in child
+
+```
+Zatem nie jest pending dla fork'a, a jest dla exec'a
+
+HANDLER:
+Dziedziczony w forku:
+```
+SIGUSR1 handled in parent
+PID: 90003, Recieved signal: 30
+PID: 90004, Recieved signal: 30
+```
+
+MASK:
+Maskuje zarówno dla forka i execa
+
+IGNORE:
+Ignoruje zarówno dla forka i execa
+

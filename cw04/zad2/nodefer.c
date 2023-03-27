@@ -19,6 +19,7 @@ int main() {
 
     sigaction(SIGINT, &sa, NULL);//wskazujemy obslugiwanie SIGINT'a
 
+    printf("NODEFER TEST\n");
     printf("Sending SIGINT signal to the process...\n");
     raise(SIGINT); //pierwszy sygnal
 
