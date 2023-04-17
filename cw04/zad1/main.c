@@ -45,19 +45,19 @@ int main(int argc, char* argv[]){
     pid_t pid = fork(); //fork
 
      if (pid == 0) { //dla dziecka
-        if (strcmp(argv[1], "pending") == 0) {
-            sigpending(&set); //odczytanie zbioru blokowanych sygnałów do set
-            if (sigismember(&set, SIGUSR1)) { //jesli proces w zbiorze tzn. ze ma status pending
-                printf("[FORK] SIGUSR1 is pending in child\n");
-            }
-            else{
-                printf("[FORK] SIGUSR1 is not pending in child!\n");
-            }
-        }
-        else{
-            raise(SIGUSR1); //wysłanie sygnału dziecka do samego siebie
-        }
-        exit(0); //wyjscie dzieckiem, aby móc kontrolowanie wywołać execl używając parenta
+         if (strcmp(argv[1], "pending") == 0) {
+             sigpending(&set); //odczytanie zbioru blokowanych sygnałów do set
+             if (sigismember(&set, SIGUSR1)) { //jesli proces w zbiorze tzn. ze ma status pending
+                 printf("[FORK] SIGUSR1 is pending in child\n");
+             }
+             else{
+                 printf("[FORK] SIGUSR1 is not pending in child!\n");
+             }
+         }
+         else{
+             raise(SIGUSR1); //wysłanie sygnału dziecka do samego siebie
+         }
+         exit(0); //wyjscie dzieckiem, aby móc kontrolowanie wywołać execl używając parenta
     }
 
      if (strcmp(argv[1], "handler") != 0) {
