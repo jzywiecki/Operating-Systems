@@ -6,19 +6,19 @@
 #define MESSAGE_SIZE 250
 
 //Wspólne oznaczenia
-//LIST 1
+//TOONE 1
 //TOALL 2
-//TOONE 3
+//LIST 3
 //STOP 4
-//JOIN/INIT 5
+//JOIN/INIT 5 (im wyzsze oznaczenie tym wyzszy priorytet bedzie)
 
 typedef struct Message {
-    long message_type;
-    int client_queue_id;
-    int client_id;
-    int other_id;
-    key_t client_queue_key;
-    char message_text[MESSAGE_SIZE];
+    long message_type; //typ wiadomosci (jak wyzej)
+    int client_queue_id; //id kolejki klienta
+    int client_id; //id klienta
+    int other_id; //id przydatne przy wysylaniu do innego klienta
+    key_t client_queue_key; //klucz kolejki klienta
+    char message_text[MESSAGE_SIZE]; //wiadomosc
 } Message;
 
 

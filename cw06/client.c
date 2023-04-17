@@ -19,11 +19,13 @@ int queue_id;
 int shared_queue_id;
 
 void sigint_handler(int signum){
+    //handler dla siginta, usuwanie kolejki itd. obsluguje juz atexit
     printf("SIGINT\n");
     exit(EXIT_SUCCESS);
 }
 
 void delete_queue(){
+    //wywolywane przy atexit, usuwamy tu kolejke i wysylamy wiadomosc do serwera, ze klient zamkniety, aby mogl przyznac id komus innemu
     if (msgctl(queue_id, IPC_RMID, NULL) < 0){
         printf("Could not delete queue!\n");
     }
@@ -36,11 +38,11 @@ void delete_queue(){
     free(message);
 }
 
-void list_handler(){
+void list_handler(){ //handler dla listy, wysylamy wiadomosc z prosba o liste na kolejke shared i oczekujemy na wiadomosc z listą na kolejce klienta
     Message* message = malloc(sizeof(Message));
     message->client_queue_key = client_queue;
     message->client_queue_id = queue_id;
-    message->message_type = 1;
+    message->message_type = 3;
     msgsnd(shared_queue_id, message, sizeof(Message), 0);
     msgrcv(queue_id, message, sizeof(Message), 0, 0);
     printf("%s\n", message->message_text);
@@ -48,45 +50,70 @@ void list_handler(){
 }
 
 void toall_handler(char *operator){
+    //wysylamy wiadomosc do wszystkich innych klientów, beda to slowa oddzielone spacjami (tak jakbysmy normalnie pisali zdanie)
     Message* message = malloc(sizeof(Message));
     message->client_queue_key = client_queue;
     message->client_queue_id = queue_id;
     message->client_id = client_id;
     message->message_type = 2;
 
-    operator = strtok(NULL, sep);
-    strcpy(message->message_text, operator);
+    if ((operator = strtok(NULL, sep)) == NULL) {
+        printf("Insert message!\n");
+    }
+    time_t ttime;
+    struct tm * currentTime;
+    time( & ttime );
+    currentTime = localtime( & ttime );
+    strcpy(message->message_text, asctime(currentTime)); //tutaj do wiadomosci dodaje czas wyslania, zgodnie z poleceniem
+    strcat(message->message_text, operator);
+    strcat(message->message_text, " ");
     while ((operator = strtok(NULL, sep)) != NULL){
         strcat(message->message_text, operator);
+        strcat(message->message_text, " ");
     }
     msgsnd(shared_queue_id, message, sizeof(Message), 0);
 }
 
 
 void toone_handler(char *operator){
+    //wyslanie wiadomosci do konkretnego klienta, ktorego okreslamy jako argument wywolania "2one <other_id> <wiadomosc>"
     Message* message = malloc(sizeof(Message));
-    operator = strtok(NULL, sep);
-    int a = atoi(operator);
-    message->other_id = a;
-
+    if ((operator = strtok(NULL, sep)) != NULL) { //wydobycie <other_id>
+        int a = atoi(operator);
+        message->other_id = a;
+    }
+    else{
+        printf("Bad client id!\n");
+        return;
+    }
     message->client_queue_key = client_queue;
     message->client_queue_id = queue_id;
     message->client_id = client_id;
-    message->message_type = 3;
-
-    operator = strtok(NULL, sep);
-    strcpy(message->message_text, operator);
+    message->message_type = 1;
+    if ((operator = strtok(NULL, sep)) == NULL) {
+        printf("Insert message!\n");
+    }
+    time_t ttime;
+    struct tm * currentTime;
+    time( & ttime );
+    currentTime = localtime( & ttime );
+    strcpy(message->message_text, asctime(currentTime)); //tutaj do wiadomosci dodaje czas wyslania, zgodnie z poleceniem
+    strcat(message->message_text, operator);
+    strcat(message->message_text, " ");
     while ((operator = strtok(NULL, sep)) != NULL){
         strcat(message->message_text, operator);
+        strcat(message->message_text, " ");
     }
-    msgsnd(shared_queue_id, message, sizeof(Message), 0);
+    msgsnd(shared_queue_id, message, sizeof(Message), 0); //wyslanie wiadomosci
 }
 
 void stop_handler(){
+    //stop po prostu wysylamy sigint aby uniknac redundancji kodu, wywola sie handler i potem atexit
     kill(getpid(), SIGINT);
 }
 
 void join_to_server(){
+    //dolaczanie do serwera, wazna rzecz, musimy wyslac serwerowi wiadomosc, z ktorej odczyta sobie nasza kolejke klienta i przypisze nam client_id
     Message* message = malloc(sizeof(Message));
     message->client_queue_key = client_queue;
     message->client_queue_id = queue_id;
@@ -107,33 +134,33 @@ void join_to_server(){
 
 
 int main(){
-    setbuf(stdout, NULL);
-    atexit(delete_queue);
+    setbuf(stdout, NULL); //bufer wyjscia ustawiam tak, aby wszystko nam sie wypisywalo od razu
+    atexit(delete_queue); //przypisuje atexit oraz handler
     signal(SIGINT, sigint_handler);
 
     char* queues_path = getenv("HOME");
 
-    client_queue = ftok(queues_path, getpid());
+    client_queue = ftok(queues_path, getpid()); //kolejka klienta, uzywamy pid klienta, aby uzyskac unikalny token
     queue_id = msgget(client_queue, IPC_CREAT | 0666);
 
-    key_t shared_queue = ftok(queues_path, PROJECT_NUMBER);
+    key_t shared_queue = ftok(queues_path, PROJECT_NUMBER); //kolejka wspolna
     shared_queue_id = msgget(shared_queue, 0);
 
-    join_to_server();
+    join_to_server(); //dolaczamy do serwera
 
     char line[LINE_MAX];
     Message* message = malloc(sizeof(Message));
     while(1) {
         sleep(1);
-        while (msgrcv(queue_id, message, sizeof(Message), 0, IPC_NOWAIT) != -1) {
+        while (msgrcv(queue_id, message, sizeof(Message), 0, IPC_NOWAIT) != -1) { //tutaj sprawdzamy czy otrzymalismy wiadomosci i je printujemy z czasem otrzymania i wyslania
             time_t ttime;
             struct tm *currentTime;
             time(&ttime);
             currentTime = localtime(&ttime);
-            printf("%s %s\n", asctime(currentTime), message->message_text);
+            printf("Recieve time:\n%sSend time:\n%s\n", asctime(currentTime), message->message_text);
         }
 
-        fgets(line, LINE_MAX, stdin);
+        fgets(line, LINE_MAX, stdin); //prosty interfejs repl, podobny jak na cw01
         if (strlen(line) == 1) {
             printf("Input correct command!\n");
             continue;
