@@ -47,8 +47,7 @@ void add_block(Counter* counter, char* block, int index){
         printf("Structure is not made yet!\n");
         return;
     }
-    if( index < 0 || index >= counter->max_size)
-    {
+    if (index < 0 || index >= counter->max_size) {
         printf("Indexes of structure are above 0 and under max_size!\n"); //check if index is proper
         return;
     }

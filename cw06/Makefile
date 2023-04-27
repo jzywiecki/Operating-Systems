@@ -5,4 +5,4 @@ main:
 	@gcc server.c -o server
 
 clean:
-	@rm client server
+	@rm client server log.txt

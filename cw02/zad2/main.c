@@ -32,7 +32,6 @@ void reverse_file_bytes(char* file_from_name, char* file_to_name){
         fread(&c, sizeof(char), 1, file_from);
         fwrite(&c, sizeof(char), 1, file_to);
     }
-
     fclose(file_from);
     fclose(file_to);
 }
