@@ -27,7 +27,7 @@ int main()
 		// Step simulation
 		update_grid(); //update'ujemy nasz background na podstawie foregroundu
 
-        //to rozwiazanie wyglada troche dziwnie, ale zależało mi, aby podmieniać zawartość pamięci, na którą wskazują wskaźniki
+        //zależało mi, aby podmieniać zawartość pamięci, na którą wskazują wskaźniki
         char* tmp = malloc(grid_width * grid_height * sizeof(char)); //tworzymy miejsce w pamieci dla zmiennej pomocniczej
         memcpy(tmp, foreground, grid_width * grid_height * sizeof(char)); //kopiujemy tam foreground
         memcpy(foreground, background, grid_width * grid_height * sizeof(char)); //w miejsce foregroundu background

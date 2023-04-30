@@ -8,11 +8,11 @@
 
 pthread_t* threads;
 
-typedef struct {
-    char* src;
-    char* dst;
-    int col;
-    int row;
+typedef struct { //struktura przechowujaca:
+    char* src; //src - foreground
+    char* dst; //dst - background
+    int col; //kolumna konkretnego threadu
+    int row; //wiersz konkretnego threadu
 } GridArgs;
 
 
@@ -108,11 +108,15 @@ void update_grid() {
 
 void* update_grid_field(void* arg){ //funkcja wywolywana przez kazdy thread
     GridArgs* args = (GridArgs*) arg; //odczytujemy argumenty przekazywane przez wygodną strukturę
+    int col = args->col;  //odczytuje dane do zmiennych
+    int row = args->row;
+    char* dst = args->dst;
+    char* src = args->src;
+    free(args); //zwalniam pamiec z args w celu unikniecia memory leakow
     while (1) { //petla aby wykonywac symulacje w nieskonczonosc
-        args->dst[args->row * grid_width + args->col] = is_alive(args->row, args->col, args->src); //tak naprawde do backgroundu obliczamy pozycje z foregroundu zeby potem je podmienic
+        dst[row * grid_width + col] = is_alive(row, col, src); //tak naprawde do backgroundu obliczamy pozycje z foregroundu zeby potem je podmienic
         pause(); //pauzujemy po obliczeniu dla pola konkretnego threada, bedzie on wznawiany po otrzymaniu sygnalu
     }
-    free(args);
 }
 
 void create_threads(char* src, char *dst) { //zgodnie z wymogiem zadania chcielismy tworzyc watki tylko raz
@@ -121,11 +125,11 @@ void create_threads(char* src, char *dst) { //zgodnie z wymogiem zadania chcieli
 
     for (int i = 0; i < grid_height; ++i) {
         for (int j = 0; j < grid_width; ++j) {
-            GridArgs* args = malloc(sizeof(GridArgs)); //tworzymy strukture, aby przekazac ja do naszych threadow
-            args->src = src;
+            GridArgs* args = malloc(sizeof(GridArgs)); //alokujemy pamiec na strukture, aby przekazac ja do naszych threadow
+            args->src = src; //przypisujemy do niej okreslone wlasnosci
             args->dst = dst;
-            args->col = i;
-            args->row = j;
+            args->row = i;
+            args->col = j;
             int error = pthread_create(&threads[i * grid_width + j], NULL, update_grid_field, (void*) args); //tworzymy thread, kazdemu przekazujemy w ktorej jest kolumnie, wierszu oraz foreground i background
             if (error){ //w przypadku gdy nie utworzymy tego threada zadbamy o to, aby nie bylo memory leakow
                 free(args);
