@@ -1,8 +1,8 @@
 all: main
 
 main:
-	@gcc client.c -o client
-	@gcc server.c -o server
+	@gcc client.c -o client -Werror
+	@gcc server.c -o server -Werror
 
 clean:
-	@rm client server log.txt
+	@rm client server
