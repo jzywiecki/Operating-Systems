@@ -4,19 +4,18 @@
 #include <stdbool.h>
 
 #define MAX_CLIENTS 3
-#define PROJECT_NUMBER 1
 #define MESSAGE_SIZE 250
 #define NAME_SIZE 20
 
 //Wspólne oznaczenia
-#define TOONE 1 //git
-#define TOALL 2 //git
-#define LIST 3 //git
-#define STOP 4 //git
-#define INIT 5 //git
-#define SERVER_FULL 6 //git
-#define USERNAME_TAKEN 7 //git
-#define PING 8 //git
+#define TOONE 1 //zrealizowane
+#define TOALL 2 //zrealizowane
+#define LIST 3 //zrealizowane
+#define STOP 4 //zrealizowane
+#define INIT 5 //zrealizowane
+#define SERVER_FULL 6 //zrealizowane
+#define USERNAME_TAKEN 7 //zrealizowane
+#define PING 8 //zrealizowane
 
 
 typedef struct Message {
@@ -27,11 +26,12 @@ typedef struct Message {
 } Message;
 
 typedef struct Client {
-    int client_id;
-    int fd;
-    char name[NAME_SIZE];
-    bool is_active;
+    int client_id; //id klienta
+    int fd; //deskryptor
+    char name[NAME_SIZE]; //nazwa klienta
+    bool is_active; //czy jest aktywny
 } Client;
+
 
 
 #endif
